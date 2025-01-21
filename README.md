@@ -14,6 +14,13 @@ npm run bundle
 npm start
 ```
 
+## Tests
+
+```sh
+npm install
+npm run test
+```
+
 ## Playing around
 
 1. Create a new `.js` file with a unique name, for example `mydesign.js`.
