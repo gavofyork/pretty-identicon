@@ -2,12 +2,15 @@
   "name": "entropretty",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf ./out",
     "build": "npm run bundle",
-    "bundle": "for file in ./designs/*.js; do rollup -i $file -o out/$(basename $file) -f es -p 'terser={mangle: {reserved: [\"draw\"]}}';  done",
-    "start": "npx serve ."
+    "bundle": "npm run clean && node bundle.js",
+    "start": "npx serve .",
+    "watch": "npm run start | ./node_modules/.bin/livereload -d -f '**/*.js' ./"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
+    "livereload": "^0.9.3",
     "rollup": "^4.18.1"
   },
   "dependencies": {

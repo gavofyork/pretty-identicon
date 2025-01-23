@@ -140,8 +140,27 @@ const DESIGNS = [
     'sprite.js',
     'squares.js',
     'star.js',
+    'example',
 ];
+
+async function checkExists(importPath) {
+    try {
+        await import(importPath).schema;
+    } catch {
+        throw 'The directory does not exist.'
+    }
+}
+
+let importPath, schema;
 for (let d in DESIGNS.sort()) {
-    addSchema((await import(`./designs/${DESIGNS[d]}`)).schema, d);
+    importPath = `./designs/${DESIGNS[d]}`;
+    if (importPath.slice(-3) == ".js") {
+        schema = (await import(importPath)).schema;
+    } else {
+        importPath = importPath + '/index.js';
+        checkExists(importPath);
+        schema = (await import(importPath)).schema;
+    }
+    addSchema(schema, d);
 }
 postMessage({ op: 'initialized' });

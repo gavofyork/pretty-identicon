@@ -6,15 +6,19 @@ Try it at https://gavofyork.github.io/entropretty/.
 
 <img width="735" alt="image" src="https://github.com/user-attachments/assets/9faef5a2-12ad-4599-b75d-a923e6594f09">
 
-## Usage
+## Usage (with Live Reload)
+
+Automatically monitors your design files for saved changes and refreshes the webpage when a modification is detected.
 
 ```sh
 npm install
 npm run bundle
-npm start
+npm run watch
 ```
 
 ## Playing around
+
+### Option 1: Create design file
 
 1. Create a new `.js` file with a unique name, for example `mydesign.js`.
 2. Define a `draw` function in it which places a unique design onto a canvas for any given 4-byte seed, e.g.:
@@ -33,6 +37,17 @@ export const schema = { draw, name: "My Cool Design", artist: "myartistname" };
 ```
 
 4. Include your file in the `const DESIGNS` array of `artist.js`.
+
+### Option 2: Create design file within custom subfolder
+
+1. Generate your new design folder by providing a unique name below, for example `mydesign`, and providing your artist name below, for example `myartistname`, and then running the bash script command below.
+  ```bash
+  ./generate.sh "mydesign" "myartistname"
+  ```
+
+2. Edit your design file `./designs/mydesign/index.js`
+
+> Additional subfolders and files within your custom subfolder is compatible with live reload.   
 
 ### The Draw Function
 
