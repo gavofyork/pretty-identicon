@@ -7,6 +7,7 @@
   <link href="main.css" rel="stylesheet" />
   <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.css">
   <title>Entropretty</title>
+  <script type="text/javascript" src="./node_modules/jszip/dist/jszip.min.js"></script>
   <script type="text/javascript" src="main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js"></script>
 </head>
@@ -18,6 +19,7 @@
         <div onclick="smallMode()">🍀</div>
         <div onclick="bigMode()"/>🖥️</div>
         <div onclick="exportPng()"/>➡️</div>
+        <div onclick="exportSvgAnimation()" id="svgAnimationsIcon"/>✿</div>
       </div>
       <canvas id="customthumb" width="100" height="100" onclick="selectSchema('[Custom]')">
     </div>

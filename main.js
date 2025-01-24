@@ -136,6 +136,10 @@ function exportSvg() {
 	a.click();
 }
 
+function exportSvgAnimation() {
+	artist.postMessage({ op: 'renderSvgAnimation', note: 'export', schemaName, seeds: seeds, index: index, width: 2000, height: 2000});
+}
+
 function updateCustom() {
 	let customCode = editor.getValue().trim();
 	let prefix = "function draw(ctx, seed) {\n";
@@ -230,7 +234,7 @@ function rerender() {
 	}
 }
 
-function onArtistMessage(e) {
+async function onArtistMessage(e) {
 	if (e.data.op == 'rendered') {
 		let { image, seed, note } = e.data;
 		if (note == "export") {
@@ -250,6 +254,28 @@ function onArtistMessage(e) {
 			if (ongoing == 0) {
 				finishRender();
 			}
+		}
+	} else if (e.data.op == 'renderedSvgAnimations') {
+		let { blobs, seed, index, schemaPrefix, note } = e.data;
+		if (note == "export") {
+			const zip = new JSZip();
+			const files = blobs;
+			const zipName = `${schemaPrefix}-animation`;
+			const img = zip.folder(zipName);
+			for (let file of files) {
+				const filename = file.name;
+				const fileblob = file.blob;
+				img.file(filename, fileblob);
+			}
+			// Generate the complete zip file and download it
+			const blobdata = await zip.generateAsync({type: 'blob'});
+			const zipblob = new Blob([blobdata]);
+			const downloadLink = document.createElement("a");
+			downloadLink.setAttribute('download', `${zipName}.zip`);
+			downloadLink.setAttribute('href', URL.createObjectURL(zipblob));
+			downloadLink.click();
+		} else {
+			console.error(`Unknown postMessage note: ${note}`);
 		}
 	} else if (e.data.op == 'addSchema') {
 		if (artistInitialized) return;

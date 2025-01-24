@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
+    "jszip": "^3.10.1",
     "rollup": "^4.18.1"
   },
   "dependencies": {
