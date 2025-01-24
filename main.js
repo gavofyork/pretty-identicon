@@ -124,16 +124,7 @@ function exportPng() {
 }
 
 function exportSvg() {
-	let schema = schemas[schemaName];
-	let context = new window.C2S(100, 100);
-	let seed = seeds[index[0]][index[1]];
-	drawItem(context, schema, seed, 100, 100);
-	let svg = context.getSerializedSvg();
-
-	let a = document.createElement('a');
-	a.download = `${schemaName}-${seed}.svg`;
-	a.href = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
-	a.click();
+	artist.postMessage({ op: 'renderSvg', note: 'export', schemaName, seed: seeds[index[0]][index[1]], width: 2000, height: 2000});
 }
 
 function updateCustom() {
@@ -251,6 +242,23 @@ function onArtistMessage(e) {
 				finishRender();
 			}
 		}
+	} else if (e.data.op == 'renderedSvg') {
+		let { blob, seed, note } = e.data;
+		if (note == "export") {
+			let downloadLink = document.createElement('a');
+			downloadLink.setAttribute('download', `${schemaName}-${seed}.svg`);
+			let canvas = document.createElement('canvas');
+			canvas.width = e.data.width;
+			canvas.height = e.data.height;
+			downloadLink.setAttribute('href', URL.createObjectURL(blob));
+			downloadLink.click();
+		} else {
+			renderCache[numeric(seed)] = image;
+			ongoing = Math.max(0, ongoing - 1);
+			if (ongoing == 0) {
+				finishRender();
+			}
+		}
 	} else if (e.data.op == 'addSchema') {
 		if (artistInitialized) return;
 		let canvas = document.createElement('canvas');
@@ -289,7 +297,7 @@ function onArtistMessage(e) {
 	}
 }
 
-function drawItem(ctx, seed, x, y, size) {
+function drawItem(ctx, schema, seed, x, y, size) {
 	let image = renderCache[numeric(seed)];
 	if (!image) {
 		ctx.lineWidth = size / 8;
@@ -304,10 +312,10 @@ function drawItem(ctx, seed, x, y, size) {
 	}
 }
 
-function paintItem(ctx, seed, x, y, size) {
+function paintItem(ctx, schema, seed, x, y, size) {
 	ctx.fillStyle = 'white';
 	ctx.fillRect(x, y, size, size + size * 0.12);
-	drawItem(ctx, seed, x, y + size * 0.12, size)
+	drawItem(ctx, schema, seed, x, y + size * 0.12, size)
 
 	ctx.save();
 	ctx.translate(x, y);
@@ -325,6 +333,7 @@ function paintItem(ctx, seed, x, y, size) {
 
 // Assumes rendering is complete.
 function paint() {
+	const schema = null;
 	if (ongoing > 0) {
 		console.warn("paint() called while rendering. This won't work.");
 		return;
@@ -335,17 +344,17 @@ function paint() {
 	ctx.fillRect(0, 0, 800 * 1.02, 800 * 1.12);
 
 	if (big) {
-		paintItem(ctx, seeds[index[0]][index[1]], 0, 0, 800);
+		paintItem(ctx, schema, seeds[index[0]][index[1]], 0, 0, 800);
 	} else {
-		paintItem(ctx, seeds[index[0]][index[1]], 0, 0, 400);
+		paintItem(ctx, schema, seeds[index[0]][index[1]], 0, 0, 400);
 		for(var i = 0; i < 16; ++i) {
 			let x = i % 4;
 			let y = Math.floor(i / 4);
-			paintItem(ctx, seeds[index[0]][i], x * 100 * 1.02 + 400 * 1.02, y * 100 * 1.12, 100);
+			paintItem(ctx, schema, seeds[index[0]][i], x * 100 * 1.02 + 400 * 1.02, y * 100 * 1.12, 100);
 		}
 		for(var y = 0; y < 8; y++) {
 			for(var x = 0; x < 16; x++) {
-				paintItem(ctx, seeds[y][x], x * 50 * 1.02, y * 50 * 1.12 + 400 * 1.12, 50);
+				paintItem(ctx, schema, seeds[y][x], x * 50 * 1.02, y * 50 * 1.12 + 400 * 1.12, 50);
 			}
 		}
 

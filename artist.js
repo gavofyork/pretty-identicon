@@ -34,7 +34,7 @@ function captionThumb(draw) {
     return canvas.transferToImageBitmap();
 }
 
-onmessage = function(e) {
+onmessage = async function(e) {
     if (e.data.op == 'render') {
         let { schemaName, note, seed, width, height } = e.data;
         let schema = schemas[schemaName];
@@ -42,6 +42,14 @@ onmessage = function(e) {
         drawItem(canvas.getContext('2d'), schema, seed, width, height);
         let image = canvas.transferToImageBitmap();
         postMessage({ op: 'rendered', note, image, seed, width, height });
+    } else if (e.data.op == 'renderSvg') {
+        let { schemaName, note, seed, width, height } = e.data;
+        let schema = schemas[schemaName];
+        let canvas = new OffscreenCanvas(width, height);
+        drawItem(canvas.getContext('2d'), schema, seed, width, height);
+        const options = { quality: 1.0, type: "image/svg+xml" };
+        let blob = await canvas.convertToBlob(options);
+        postMessage({ op: 'renderedSvg', note, blob, seed, width, height });
     } else if (e.data.op == 'updateCustom') {
         try {
             let d = eval(e.data.code);

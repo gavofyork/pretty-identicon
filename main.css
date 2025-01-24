@@ -45,11 +45,15 @@ html, body {
     padding: 10px 7px;
 }
 #modes div {
-    border: white 2px solid;
+    border: none;
     padding: 4px 3px;
     margin: 0 3px;
     text-align: center;
-    min-width: 25px;
-    background: #222;
+    min-width: 12px;
+    background: transparent;
     font-size: 20px;
+}
+
+#modes > #svgIcon {
+    color: black;
 }
