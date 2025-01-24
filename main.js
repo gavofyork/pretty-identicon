@@ -196,7 +196,7 @@ function resetSeeds() {
 	seeds = [];
 	for(var i = 0; i < 8; ++i) {
 		let run = [randSeed(4)];
-		for(var j = 0; j < 15; ++j) {
+		for(var j = 0; j < 16; ++j) {
 			run.push(run.slice(-1)[0].slice());
 			mutate(run.slice(-1)[0]);
 		}
